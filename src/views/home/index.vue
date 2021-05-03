@@ -2,54 +2,95 @@
   <div class="home">
     <!-- 轮播图 -->
     <div class="banner">
-      <el-carousel indicator-position="outside" height="480px">
-        <el-carousel-item v-for="(item,i) in banner" :key="i">
-          <img v-if="item.picUrl" class="img1" :src="item.picUrl" alt>
-          <img v-if="item.picUrl2" class="img2 a" :src="item.picUrl2" alt>
-          <img v-if="item.picUrl3" class="img3 b" :src="item.picUrl3" alt>
+      <el-carousel indicator-position="outside" height="200px" type="card">
+        <el-carousel-item v-for="(item,i) in homeInfo.advertiseList" :key="item.id">
+          <a :href ="item.url">
+            <el-image v-if="item.pic" class="img1" :src="item.pic"></el-image>
+          </a>
+<!--          <img v-if="item.pic" class="img1" :src="item.pic" alt>-->
         </el-carousel-item>
       </el-carousel>
     </div>
-    <div v-for="(item,index) in homeList" :key="index">
-      <div class="activity-panel" v-if="item.type===1">
-        <!-- 仅仅要活动版块的内容 -->
-        <el-row>
-          <el-col class="content" :span="8" v-for="o in item.panelContents" :key="o.id">
-            <el-card :body-style="{ padding: '0px' }">
-              <img :src="o.picUrl" class="i">
-              <a href="#" class="cover-link"></a>
-            </el-card>
-          </el-col>
-        </el-row>
-      </div>
-      <!-- 商品title -->
-      <section class="w mt30 clearfix" v-if="item.type===2">
-        <m-shelf :title="item.name">
-          <div slot="content" class="hot">
-            <mall-goods v-for="(o,i) in item.panelContents" :key="i" :goods="o"></mall-goods>
-          </div>
-        </m-shelf>
-      </section>
-      <section class="w mt30 clearfix" v-if="item.type===3">
-        <m-shelf :title="item.name">
-          <div slot="content" class="floors">
-            <div
-                class="imgbanner"
-                v-for="(o,j) in item.panelContents"
-                :key="j"
-                v-if="o.type===2 || o.type===3"
-            >
-              <img :src="o.picUrl" alt="">
-            </div>
-            <mall-goods :goods='o' v-for='(o,i) in item.panelContents' :key='i' v-if='o.type===0'></mall-goods>
-          </div>
-        </m-shelf>
-      </section>
+
+    <div class="activity-panel">
+      <el-row>
+        <el-col  class="content" :span="6" v-for="o in homeInfo.brandList" :key="o.id" >
+          <el-card :body-style="{ padding: '0px' }" shadow="hover">
+            <img :src="o.bigPic" class="i" alt>
+            <img :src="o.logo" class="logo" alt>
+            <a href="#" class="cover-link"></a>
+          </el-card>
+        </el-col>
+      </el-row>
     </div>
+
+    <!-- 秒杀专区 -->
+    <section class="w mt30 clearfix" v-if="homeInfo.homeFlashPromotion.id">
+      <m-shelf :title=title.flash>
+        <div slot="content" class="hot">
+
+        </div>
+      </m-shelf>
+    </section>
+
+    <!-- 热门商品   -->
+    <section class="w mt30 clearfix" >
+      <m-shelf :title=title.hot>
+        <template v-slot:content>
+          <div class="hot">
+            <mall-goods v-for="item in homeInfo.hotProductList" :goods=item>
+
+            </mall-goods>
+          </div>
+        </template>
+      </m-shelf>
+    </section>
   </div>
 </template>
 
 <script>
+import {homeContent as homeContentInfos} from '@/api/home'
+import MShelf from "@/components/Shelf";
+import MallGoods from "@/components/MallGoods";
+export default {
+  data(){
+    return{
+      homeInfo:{
+        advertiseList:[],
+        brandList :[],
+        homeFlashPromotion : {},
+        hotProductList: {}
+      },
+      title:{
+        hot: "热门商品",
+        flash: "秒杀专区"
+      },
+      advertise:{
+        clickCount :0,
+        endTime : '',
+        id		:'',
+        name		:'',
+        note	:'',
+        orderCount	:0,
+        pic		:'',
+        sort	:'',
+        startTime		:'',
+        status	:0,
+        type	:'',
+        url	:'',
+      }
+    }
+  },
+    components: {
+    MShelf,
+    MallGoods
+  },
+  async created() {
+    homeContentInfos().then(response => {
+      this.homeInfo =response.data;
+    })
+  }
+}
 // import MShelf from "@/components/Shelf";
 // import MallGoods from "@/components/MallGoods";
 // // 主要逻辑
@@ -169,8 +210,15 @@
     pointer-events: none;
   }
   .i {
-    width: 305px;
+    width: 100%;
     height: 200px;
+  }
+  .logo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 50px;
+    max-width: 90%;
   }
   .cover-link {
     cursor: pointer;
@@ -212,7 +260,6 @@
   margin: 0 auto 40px;
   width: 1220px;
 }
-
 .bg {
   position: relative;
   width: 1220px;
