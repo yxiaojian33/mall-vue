@@ -131,7 +131,7 @@
             <div class="w">
               <el-breadcrumb separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                <el-breadcrumb-item :to="{path:'/products'}">全部</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{path:'/products'}">热门推荐</el-breadcrumb-item>
                 <el-breadcrumb-item :to="{path:'/products?cid=1184'}">品牌周边</el-breadcrumb-item>
                 <el-breadcrumb-item :to="{path:'/saleRecommend'}">特惠</el-breadcrumb-item>
               </el-breadcrumb>
@@ -144,6 +144,32 @@
   </div>
 </template>
 <script>
+export default {
+  data(){
+    return{
+      input: ''
+    }
+  },
+  methods: {
+    handleIconClick(ev) {
+      if (this.$route.path === '/search') {
+        this.$router.push({
+          path: '/refreshsearch',
+          query: {
+            key: this.input
+          }
+        })
+      } else {
+        this.$router.push({
+          path: '/search',
+          query: {
+            key: this.input
+          }
+        })
+      }
+    }
+  }
+}
   // import YButton from '/components/YButton'
   // import { mapMutations, mapState } from 'vuex'
   // // import { getCartList, cartDel, getQuickSearch } from '/api/goods'

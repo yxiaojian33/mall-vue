@@ -12,7 +12,7 @@
       </el-carousel>
     </div>
 
-    <div class="activity-panel">
+    <div class="activity-panel" v-if="homeInfo.brandList && homeInfo.brandList.length > 0">
       <el-row>
         <el-col  class="content" :span="6" v-for="o in homeInfo.brandList" :key="o.id" >
           <el-card :body-style="{ padding: '0px' }" shadow="hover">
@@ -34,14 +34,43 @@
     </section>
 
     <!-- 热门商品   -->
-    <section class="w mt30 clearfix" >
+    <section class="w mt30 clearfix" v-if="homeInfo.hotProductList && homeInfo.hotProductList.length > 0"  >
       <m-shelf :title=title.hot>
         <template v-slot:content>
           <div class="hot">
-            <mall-goods v-for="item in homeInfo.hotProductList" :goods=item>
-
+            <mall-goods v-for="item in homeInfo.hotProductList" :products=item>
             </mall-goods>
           </div>
+        </template>
+      </m-shelf>
+    </section>
+
+    <!-- 新鲜好物   -->
+    <section class="w mt30 clearfix" v-if="homeInfo.newProductList && homeInfo.newProductList.length > 0" >
+      <m-shelf :title=title.newProduct>
+        <template v-slot:content>
+          <div class="floors">
+<!--            <template   v-for="(item,i) in homeInfo.newProductList.slice(0,1)">-->
+<!--              <div-->
+<!--                  class="imgbanner"-->
+<!--                  :key="i"-->
+<!--                  v-if='i==0'-->
+<!--              >-->
+<!--                <img :src="item.pic" alt="">-->
+<!--              </div>-->
+<!--            </template>-->
+            <mall-goods  class="bigPic" v-for="item in homeInfo.newProductList.slice(0 ,1)" :products=item />
+            <mall-goods v-for="item in homeInfo.newProductList.slice(1,4)" :products=item />
+          </div>
+        </template>
+      </m-shelf>
+    </section>
+
+    <!--    专题精选-->
+    <section class="w mt30 clearfix" v-if="homeInfo.subjectList && homeInfo.subjectList.length > 0" >
+      <m-shelf :title=title.subject>
+        <template v-slot:content>
+          <subject v-for="item in homeInfo.subjectList" :subject="item"></subject>
         </template>
       </m-shelf>
     </section>
@@ -52,6 +81,7 @@
 import {homeContent as homeContentInfos} from '@/api/home'
 import MShelf from "@/components/Shelf";
 import MallGoods from "@/components/MallGoods";
+import subject from '@/components/subject'
 export default {
   data(){
     return{
@@ -59,11 +89,15 @@ export default {
         advertiseList:[],
         brandList :[],
         homeFlashPromotion : {},
-        hotProductList: {}
+        hotProductList: [],
+        newProductList:[],//新鲜好物
+        subjectList:[]
       },
       title:{
         hot: "热门商品",
-        flash: "秒杀专区"
+        flash: "秒杀专区",
+        newProduct : "新鲜好物",
+        subject: "专题精选"
       },
       advertise:{
         clickCount :0,
@@ -83,7 +117,8 @@ export default {
   },
     components: {
     MShelf,
-    MallGoods
+    MallGoods,
+    subject
   },
   async created() {
     homeContentInfos().then(response => {
@@ -124,7 +159,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
+}
 .home {
+  background: #ededed;
   display: flex;
   flex-direction: column;
 }
@@ -407,6 +447,9 @@ ul.box {
   }
 }
 
+.bigPic{
+  width: 50%;
+}
 .floors {
   width: 100%;
   display: flex;

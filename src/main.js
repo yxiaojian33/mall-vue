@@ -5,7 +5,7 @@ import store from './store'
 //TODO vue3.0+ lazy-load
 // import VueLazyload from 'vue-lazyload'
 import {
-    ElButton,ElAutocomplete,ElInput,ElBreadcrumb,ElBreadcrumbItem ,ElCarousel,ElCarouselItem,ElCol,ElRow ,ElImage} from 'element-plus'
+    ElButton,ElAutocomplete,ElInput,ElBreadcrumb,ElBreadcrumbItem ,ElCarousel,ElCarouselItem,ElCol,ElRow ,ElImage,ElInfiniteScroll,ElLoading,ElPagination} from 'element-plus'
 
 createApp(App)
     .use(store)
@@ -20,4 +20,7 @@ createApp(App)
     .use(ElRow)
     .use(ElCol)
     .use(ElImage)
+    .use(ElInfiniteScroll)
+    .use(ElLoading)
+    .use(ElPagination)
     .mount('#app')

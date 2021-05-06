@@ -21,10 +21,23 @@ const routes = [
     ]
   },
   {
+    path: '/header',
+    name: 'header',
+    component: ()=> import('@/views/header'),
+    children: [
+      {
+        path: '/search',
+        component: ()=> import('@/views/search')
+      }
+    ]
+  },
+  {
     path: '/login',
     name: 'login',
     component: ()=> import('@/views/login')
-  }
+  },
+  {path: '/refreshsearch', name: 'refreshsearch', component: ()=>import('@/views/refresh/refreshsearch.vue')},
+
 ]
 
 const router = createRouter({

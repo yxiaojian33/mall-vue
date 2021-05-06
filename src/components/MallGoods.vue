@@ -4,27 +4,27 @@
       <el-card :body-style="{padding: 0}">
         <div class="good-img">
           <a>
-            <img :src="goods.pic" alt lazy>
+            <img :src="products.pic" alt lazy>
           </a>
         </div>
-        <h6 class="good-title">{{goods.name}}</h6>
-        <h3 class="sub-title ellipsis">{{goods.detailTitle}}</h3>
+        <h6 class="good-title">{{products.name}}</h6>
+        <h3 class="sub-title ellipsis">{{products.subTitle}}</h3>
         <div class="good-price pr">
           <div class="ds pa">
             <a href='javascript:;'>
-              <el-button type="default" size="medium" @click="productDetail(goods.id)">查看详情</el-button>
+              <el-button type="default" size="medium" @click="productDetail(products.id)">查看详情</el-button>
             </a>
             <a href="javascript:;">
               <el-button
                 type="primary"
                 size="medium"
-                @click="addCart(goods.id,goods.price,goods.name,goods.pic)"
+                @click="addCart(products.id,products.price,products.name,products.pic)"
               >加入购物车</el-button>
             </a>
           </div>
           <p>
             <span style="font-size:14px">¥</span>
-            {{Number(goods.price).toFixed(2)}}
+            {{Number(products.price).toFixed(2)}}
           </p>
         </div>
       </el-card>
@@ -35,7 +35,7 @@
 import { mapState,mapMutations } from "vuex";
 import { getStore } from "@/utils/storage";
 export default {
-  props: ["goods"],
+  props: ["products"],
   computed: {
     ...mapState(["login"])
   },
@@ -44,7 +44,7 @@ export default {
     productDetail(id) {
       // 编程式导航
       this.$router.push({
-        name: 'goodsDetail',
+        name: 'productsDetail',
         query:{
           productId:id
         }
@@ -95,6 +95,9 @@ export default {
   }
 }
 .good-price {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
   margin: 15px 0;
   height: 30px;
   text-align: center;
@@ -105,7 +108,7 @@ export default {
   font-weight: 700;
   display: flex;
   justify-content: space-around;
-  padding-bottom: 60px;
+  padding-bottom: 43px;
   a {
     margin-right: 5px;
   }
