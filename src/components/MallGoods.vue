@@ -44,7 +44,7 @@ export default {
     productDetail(id) {
       // 编程式导航
       this.$router.push({
-        name: 'productsDetail',
+        path:'/productsDetail',
         query:{
           productId:id
         }

@@ -6,18 +6,10 @@ const routes = [
     redirect : 'home',
     component: ()=> import('@/views/index'),
     children :[
-      {
-        path: 'home',
-        component : ()=>import('@/views/home')
-      },
-      {
-        path: 'products',
-        component : ()=>import('@/views/products')
-      },
-      {
-        path: 'saleRecommend',
-        component : ()=>import('@/views/saleRecommend')
-      }
+      {path: 'home', component : ()=>import('@/views/home')},
+      {path: 'products', component : ()=>import('@/views/products')},
+      {path: 'saleRecommend', component : ()=>import('@/views/saleRecommend')},
+      {path: 'productsDetail', component : ()=>import('@/views/products/productsDetail')}
     ]
   },
   {
@@ -25,17 +17,10 @@ const routes = [
     name: 'header',
     component: ()=> import('@/views/header'),
     children: [
-      {
-        path: '/search',
-        component: ()=> import('@/views/search')
-      }
+      {path: '/search', component: ()=> import('@/views/search')}
     ]
   },
-  {
-    path: '/login',
-    name: 'login',
-    component: ()=> import('@/views/login')
-  },
+  {path: '/login', name: 'login', component: ()=> import('@/views/login')},
   {path: '/refreshsearch', name: 'refreshsearch', component: ()=>import('@/views/refresh/refreshsearch.vue')},
 
 ]

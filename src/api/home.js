@@ -27,3 +27,10 @@ export function search(params) {
         params:params
     })
 }
+
+export function detail(id) {
+    return request({
+        url:'/mall-portal/product/detail/'+id,
+        method:'get',
+    })
+}

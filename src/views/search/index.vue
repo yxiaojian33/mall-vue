@@ -95,6 +95,7 @@ export default {
   data(){
     return{
       noResult:false,
+      error:false,
       key: '',
       searching: true,
       loading:true,
@@ -128,9 +129,8 @@ export default {
         this.recommendList = res.data
       })
     },
-    getSearch (){
+    async getSearch (){
       this.loading = true;
-      this.noResult = true
       let params ={
         keyword: this.key,
         pageNum: this.currentPage - 1,
@@ -138,16 +138,23 @@ export default {
         sort: this.sortType
       }
       searchProduct(params).then(res=>{
-        this.total = res.data.total;
-        this.searchResult = res.data.list;
-        if(this.total > 0) this.noResult = false;
+        if(res.code == 200){
+          this.total = res.data.total;
+          this.searchResult = res.data.list;
+          this.error = false;
+          if(this.total > 0) this.noResult = false;
+          else this.noResult= true
+        }
+        else{
+          this.error = true
+        }
         this.loading = false;
         this.searching = false;
       })
     }
   },
 
-  mounted () {
+ async mounted () {
     this.key =this.$route.query.key;
     this.getSearch();
     this.getRecommend();

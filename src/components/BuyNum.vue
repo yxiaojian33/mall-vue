@@ -1,9 +1,10 @@
 <template>
-  <el-input-number v-model="num" @change="handleChange" :min="1" :max="10" label="描述文字"></el-input-number>
+  <el-input-number v-model="num" @change="handleChange" :min="1" :max="limit" label="描述文字"></el-input-number>
 </template>
 
 <script>
 export default {
+  props:["limit"],
   data() {
     return {
       num: 1
@@ -17,5 +18,11 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
+.el-input-number__decrease, .el-input-number__increase {
+  height: 40px;
+  width: 40px;
+  background: #ebebeb;
+  border-radius:20px;
+}
 </style>
