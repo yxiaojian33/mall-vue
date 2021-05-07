@@ -47,13 +47,8 @@
 
 
         <div class="buy">
-          <y-button text="加入购物车"
-                    @btnClick="addCart(details.product.id,details.product.price,details.product.name,details.product.pic)"
-                    classStyle="main-btn"
-                    style="width: 145px;height: 50px;line-height: 48px"></y-button>
-          <y-button text="现在购买"
-                    @btnClick="checkout(details.product.id)"
-                    style="width: 145px;height: 50px;line-height: 48px;margin-left: 10px"></y-button>
+          <el-button type="primary" @click='addCart()'>加入购物车</el-button>
+          <el-button type="danger">现在购买</el-button>
         </div>
       </div>
     </div>
@@ -79,13 +74,11 @@
 
 import {detail as getProductDetail} from '@/api/home'
 import BuyNum from '@/components/BuyNum'
-import YButton from '@/components/YButton'
 import MShelf from '@/components/Shelf'
 export default {
   name: "productsDetail",
   components:{
     BuyNum,
-    YButton,
     MShelf
   },
   data(){
@@ -136,8 +129,10 @@ export default {
           else this.small = str.split(',');
           this.small.push(this.details.product.pic)
           this.details.productAttributeValueList.forEach(item=>{
-            item.value = item.value.split(",")
-            this.productAttributeMap[item.productAttributeId] = item;
+           if(item.value){
+             item.value = item.value.split(",")
+             this.productAttributeMap[item.productAttributeId] = item;
+           }
           })
           this.details.productAttributeList.forEach((item,i)=>{ //设置默认选中
             let tmp = this.productAttributeMap[item.id];
@@ -148,6 +143,7 @@ export default {
            this.skuStockListMap.set(item.spData ,item);
           })
           this.big = this.small[0]
+          console.log(this.small)
       })
     }
   },
