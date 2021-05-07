@@ -37,13 +37,12 @@
                 <div class="nav-user-wrapper pa" v-if="login">
                   <div class="nav-user-list">
                     <ul>
-                      <!--头像-->
                       <li class="nav-user-avatar">
                         <div>
-                          <span class="avatar" :style="{backgroundImage:'url('+userInfo.info.icon+')'}">
+                          <span class="avatar" :style="{backgroundImage:'url('+userInfo.icon+')'}" v-if="userInfo.icon">
                           </span>
                         </div>
-                        <p class="name">{{userInfo.info.username}}</p>
+                        <p class="name">{{userInfo.username}}</p>
                       </li>
                       <li>
                         <router-link to="/user/orderList">我的订单</router-link>
@@ -71,7 +70,7 @@
                    ref="positionMsg">
                 <router-link to="/cart"></router-link>
                 <span class="cart-num">
-                  <i class="num" :class="{no:totalNum <= 0,move_in_cart:receiveInCart}">{{totalNum}}</i></span>
+                  <i class="num" :class="{no:totalNum <= 0,move_in_cart:true}">{{totalNum}}</i></span>
                 <!--购物车显示块-->
                 <div class="nav-user-wrapper pa active" v-show="showCart">
                   <div class="nav-user-list">
@@ -84,7 +83,7 @@
                               <div class="cart-item-inner">
                                 <a @click="openProduct(item.productId)">
                                   <div class="item-thumb">
-                                    <img :src="item.productImg">
+                                    <img :src="item.productImageBig">
                                   </div>
                                   <div class="item-desc">
                                     <div class="cart-cell"><h4>
@@ -97,7 +96,7 @@
                                       </h6></div>
                                   </div>
                                 </a>
-                                <div class="del-btn del" @click="delGoods(item.productId)">删除</div>
+                                <div class="del-btn del" @click="delGoods(item.productId ,item.productNum - 1)">删除</div>
                               </div>
                             </div>
                           </li>
@@ -108,9 +107,7 @@
                         class="price-icon">¥</span><span
                         class="price-num">{{totalPrice}}</span></h5>
                         <h6>
-                          <y-button classStyle="main-btn"
-                                    style="height: 40px;width: 100%;margin: 0;color: #fff;font-size: 14px;line-height: 38px"
-                                    text="去购物车" @btnClick="toCart"></y-button>
+                          <el-button type="warning" style="float: right">结算</el-button>
                         </h6>
                       </div>
                     </div>
@@ -144,13 +141,46 @@
   </div>
 </template>
 <script>
+import {getToken} from "@/utils/auth";
+import {getInfo} from "@/api/member";
+import { mapState, mapMutations } from "vuex";
+
 export default {
   data(){
     return{
-      input: ''
+      input: '',
+      login:false,
+      userInfo:{}
+    }
+  },
+  computed: {
+    ...mapState(["login", "userInfo", "cartList", "showCart"]),
+    totalNum() {
+      return (
+          this.cartList &&
+          this.cartList.reduce((total, item) => {
+            total += item.productNum;
+            return total;
+          }, 0)
+      );
+    },
+    totalPrice(){
+      return (
+          this.cartList &&
+          this.cartList.reduce((total, item) => {
+            total += item.productNum * item.salePrice;
+            return total;
+          }, 0)
+      );
     }
   },
   methods: {
+    ...mapMutations(["SHOWCART", "INITBUYCART","EDIT_CART"]),
+    cartShowState(state) {
+      this.SHOWCART({
+        showCart: state
+      });
+    },
     handleIconClick(ev) {
       if (this.$route.path === '/search') {
         this.$router.push({
@@ -167,7 +197,27 @@ export default {
           }
         })
       }
+    },
+    delGoods (productId , productNum) {
+      if (this.login) { // 登陆了
+        // cartDel({userId: getStore('userId'), productId}).then(res => {
+        //   this.EDIT_CART({productId})
+        // })
+      } else {
+        this.EDIT_CART({productId,productNum})
+      }
+    },
+  },
+  mounted() {
+    if(getToken()){
+      getInfo().then(res=>{
+        if(res.code ===200){
+          this.userInfo = res.data;
+          this.login = true;
+        }
+      })
     }
+    else this.login =false;
   }
 }
   // import YButton from '/components/YButton'

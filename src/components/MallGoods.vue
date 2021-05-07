@@ -37,7 +37,7 @@ import { getStore } from "@/utils/storage";
 export default {
   props: ["products"],
   computed: {
-    ...mapState(["login"])
+    ...mapState(["login" ,"showCart"])
   },
   methods: {
     ...mapMutations(['ADDCART']),
