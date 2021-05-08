@@ -17,8 +17,11 @@
           <el-input type="password" v-model="ruleForm.password" autocomplete="off" placeholder="请输入密码"></el-input>
         </el-form-item>
         <el-form-item>
+          <el-checkbox v-model="checked" style="float: left">记住密码</el-checkbox>
+        </el-form-item>
+        <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
-          <el-button>返回</el-button>
+          <el-button style="margin-left: 80px;">返回</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -29,7 +32,7 @@
 import { setStore, getStore, removeStore } from "@/utils/storage";
 import {setSupport,getSupport,setCookie,getCookie} from '@/utils/support';
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import {login} from '@/api/member'
+import {login ,getInfo} from '@/api/member'
 import store from '@/store'
 export default {
   data() {
@@ -48,9 +51,11 @@ export default {
       }
     };
     return {
+      checked: true,
+      redirect: '',
       ruleForm: {
-        username: "",
-        password: ""
+        username: getCookie("username") ||"",
+        password: getCookie("password") ||""
       },
       rules: {
         username: [{ validator: validateUser, trigger: "blur" }],
@@ -61,13 +66,13 @@ export default {
   },
   mounted() {
     //缓存当前购物车中的数据
+    this.redirect =this.$route.query.redirect;
     this.login_addCart();
   },
   methods: {
     login_addCart() {
       let cartArr = [];
       let localCart = JSON.parse(getStore("buyCart"));
-      console.log(localCart);
 
       if (localCart && localCart.length) {
         localCart.forEach(item => {
@@ -80,17 +85,24 @@ export default {
       }
       this.cart = cartArr;
     },
-    submitForm(formName) {
+    async submitForm(formName) {
       this.$refs[formName].validate(async valid => {
         if (valid) {
           login(this.ruleForm).then((res)=>{
             if(res.code == 200){
               const data = res.data
               const tokenStr = data.tokenHead+data.token
+              getInfo().then(info=>{
+                if(info.code ===200){
+                  store.commit('ISLOGIN', info.data)
+                }
+              })
               setToken(tokenStr)
               setCookie("username",this.ruleForm.username,15);
               setCookie("password",this.ruleForm.password,15);
-              this.$router.push({path: '/'})
+              this.$router.push('/')
+              // if(this.redirect && this.redirect.length){ this.$router.push({path: this.redirect})}
+              // else this.$router.push('/')
             }
           })
           //   获取用户名和密码

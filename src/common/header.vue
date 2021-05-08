@@ -60,7 +60,7 @@
                         <router-link to="/user/coupon">我的优惠</router-link>
                       </li>
                       <li>
-                        <a href="javascript:;" @click="_loginOut">退出</a>
+                        <a href="javascript:;" @click="loginOut">退出</a>
                       </li>
                     </ul>
                   </div>
@@ -141,16 +141,15 @@
   </div>
 </template>
 <script>
-import {getToken} from "@/utils/auth";
-import {getInfo} from "@/api/member";
-import { mapState, mapMutations } from "vuex";
 
+import {cartList} from "@/api/cartitems";
+import { setStore } from "@/utils/storage";
+import { mapState, mapMutations } from "vuex";
+import store from '@/store'
 export default {
   data(){
     return{
       input: '',
-      login:false,
-      userInfo:{}
     }
   },
   computed: {
@@ -175,7 +174,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["SHOWCART", "INITBUYCART","EDIT_CART"]),
+    ...mapMutations(["SHOWCART", "INIT_BUYCART","EDIT_CART"]),
     cartShowState(state) {
       this.SHOWCART({
         showCart: state
@@ -207,258 +206,34 @@ export default {
         this.EDIT_CART({productId,productNum})
       }
     },
+    getCartList () {
+      cartList().then(res => {
+        if (res.success === true) {
+          setStore('buyCart', res.result)
+        }
+        // 重新初始化一次本地数据
+      }).then(this.INIT_BUYCART)
+    },
+    loginOut(){
+      store.commit("CLEAR")
+      window.location.href = "/";
+    },
   },
   mounted() {
-    if(getToken()){
-      getInfo().then(res=>{
-        if(res.code ===200){
-          this.userInfo = res.data;
-          this.login = true;
-        }
-      })
+    if (this.login) {
+      this.getCartList()
+    } else {
+      this.INIT_BUYCART()
     }
-    else this.login =false;
+    // if(getToken()){
+    //   getInfo().then(res=>{
+    //     if(res.code ===200){
+    //       this.userInfo = res.data;
+    //     }
+    //   })
+    // }
   }
 }
-  // import YButton from '/components/YButton'
-  // import { mapMutations, mapState } from 'vuex'
-  // // import { getCartList, cartDel, getQuickSearch } from '/api/goods'
-  // // import { loginOut, navList } from '/api/index'
-  // // import { setStore, getStore, removeStore } from '/utils/storage'
-  // // import store from '../store/'
-  // import 'element-ui/lib/theme-default/index.css'
-  // export default{
-  //   data () {
-  //     return {
-  //       user: {},
-  //       // 查询数据库的商品
-  //       st: false,
-  //       // 头部购物车显示
-  //       cartShow: false,
-  //       positionL: 0,
-  //       positionT: 0,
-  //       timerCartShow: null, // 定时隐藏购物车
-  //       input: '',
-  //       choosePage: -1,
-  //       searchResults: [],
-  //       timeout: null,
-  //       token: '',
-  //       navList: []
-  //     }
-  //   },
-  //   computed: {
-  //     ...mapState([
-  //       'cartList', 'login', 'receiveInCart', 'showCart', 'userInfo'
-  //     ]),
-  //     // 计算价格
-  //     totalPrice () {
-  //       var totalPrice = 0
-  //       this.cartList && this.cartList.forEach(item => {
-  //         totalPrice += (item.productNum * item.salePrice)
-  //       })
-  //       return totalPrice
-  //     },
-  //     // 计算数量
-  //     totalNum () {
-  //       var totalNum = 0
-  //       this.cartList && this.cartList.forEach(item => {
-  //         totalNum += (item.productNum)
-  //       })
-  //       return totalNum
-  //     }
-  //   },
-  //   methods: {
-  //     ...mapMutations(['ADD_CART', 'INIT_BUYCART', 'ADD_ANIMATION', 'SHOW_CART', 'REDUCE_CART', 'RECORD_USERINFO', 'EDIT_CART']),
-  //     handleIconClick (ev) {
-  //       if (this.$route.path === '/search') {
-  //         this.$router.push({
-  //           path: '/refreshsearch',
-  //           query: {
-  //             key: this.input
-  //           }
-  //         })
-  //       } else {
-  //         this.$router.push({
-  //           path: '/search',
-  //           query: {
-  //             key: this.input
-  //           }
-  //         })
-  //       }
-  //     },
-  //     showError (m) {
-  //       this.$message.error({
-  //         message: m
-  //       })
-  //     },
-  //     // 导航栏文字样式改变
-  //     changePage (v) {
-  //       this.choosePage = v
-  //     },
-  //     changGoods (v, item) {
-  //       this.changePage(v)
-  //       if (v === -1) {
-  //         this.$router.push({
-  //           path: '/'
-  //         })
-  //       } else if (v === -2) {
-  //         this.$router.push({
-  //           path: '/refreshgoods'
-  //         })
-  //       } else {
-  //         // 站内跳转
-  //         if (item.type === 1) {
-  //           window.location.href = item.fullUrl
-  //         } else {
-  //           // 站外跳转
-  //           window.open(item.fullUrl)
-  //         }
-  //       }
-  //     },
-  //     // 搜索框提示
-  //     loadAll () {
-  //       let params = {
-  //         params: {
-  //           key: this.input
-  //         }
-  //       }
-  //       getQuickSearch(params).then(res => {
-  //         if (res === null || res === '') {
-  //           return
-  //         }
-  //         if (res.error) {
-  //           this.showError(res.error.reason)
-  //           return
-  //         }
-  //         var array = []
-  //         var maxSize = 5
-  //         if (res.hits.hits.length <= 5) {
-  //           maxSize = res.hits.hits.length
-  //         }
-  //         for (var i = 0; i < maxSize; i++) {
-  //           var obj = {}
-  //           obj.value = res.hits.hits[i]._source.productName
-  //           array.push(obj)
-  //         }
-  //         if (array.length !== 0) {
-  //           this.searchResults = array
-  //         } else {
-  //           this.searchResults = []
-  //         }
-  //       })
-  //     },
-  //     querySearchAsync (queryString, cb) {
-  //       if (this.input === undefined) {
-  //         cb([])
-  //         return
-  //       }
-  //       this.input = this.input.trim()
-  //       if (this.input === '') {
-  //         cb([])
-  //         return
-  //       } else {
-  //         this.loadAll()
-  //         setTimeout(() => {
-  //           cb(this.searchResults)
-  //         }, 300)
-  //       }
-  //     },
-  //     handleSelect (item) {
-  //       this.input = item.value
-  //     },
-  //     // 购物车显示
-  //     cartShowState (state) {
-  //       this.SHOW_CART({showCart: state})
-  //     },
-  //     // 登陆时获取一次购物车商品
-  //     _getCartList () {
-  //       getCartList({userId: getStore('userId')}).then(res => {
-  //         if (res.success === true) {
-  //           setStore('buyCart', res.result)
-  //         }
-  //         // 重新初始化一次本地数据
-  //       }).then(this.INIT_BUYCART)
-  //     },
-  //     // 删除商品
-  //     delGoods (productId) {
-  //       if (this.login) { // 登陆了
-  //         cartDel({userId: getStore('userId'), productId}).then(res => {
-  //           this.EDIT_CART({productId})
-  //         })
-  //       } else {
-  //         this.EDIT_CART({productId})
-  //       }
-  //     },
-  //     toCart () {
-  //       this.$router.push({path: '/cart'})
-  //     },
-  //     // 控制顶部
-  //     navFixed () {
-  //       if (this.$route.path === '/goods' || this.$route.path === '/home' || this.$route.path === '/goodsDetails' || this.$route.path === '/thanks') {
-  //         var st = document.documentElement.scrollTop || document.body.scrollTop
-  //         st >= 100 ? this.st = true : this.st = false
-  //         // 计算小圆当前位置
-  //         let num = document.querySelector('.num')
-  //         this.positionL = num.getBoundingClientRect().left
-  //         this.positionT = num.getBoundingClientRect().top
-  //         this.ADD_ANIMATION({cartPositionL: this.positionL, cartPositionT: this.positionT})
-  //       } else {
-  //         return
-  //       }
-  //     },
-  //     // 退出登陆
-  //     _loginOut () {
-  //       let params = {
-  //         params: {
-  //           token: this.token
-  //         }
-  //       }
-  //       loginOut(params).then(res => {
-  //         removeStore('buyCart')
-  //         window.location.href = '/'
-  //       })
-  //     },
-  //     // 通过路由改变导航文字样式
-  //     getPage () {
-  //       let path = this.$route.path
-  //       // let fullPath = this.$route.fullPath
-  //       if (path === '/' || path === '/home') {
-  //         this.changePage(-1)
-  //       } else if (path === '/goods') {
-  //         this.changePage(-2)
-  //       } else {
-  //         this.changePage(0)
-  //       }
-  //     },
-  //     openProduct (productId) {
-  //       window.open('//' + window.location.host + '/#/goodsDetails?productId=' + productId)
-  //     },
-  //     _getNavList () {
-  //       navList().then(res => {
-  //         this.navList = res.result
-  //       })
-  //     }
-  //   },
-  //   mounted () {
-  //     this._getNavList()
-  //     this.token = getStore('token')
-  //     if (this.login) {
-  //       this._getCartList()
-  //     } else {
-  //       this.INIT_BUYCART()
-  //     }
-  //     this.navFixed()
-  //     this.getPage()
-  //     window.addEventListener('scroll', this.navFixed)
-  //     window.addEventListener('resize', this.navFixed)
-  //     if (typeof (this.$route.query.key) !== undefined) {
-  //       this.input = this.$route.query.key
-  //     }
-  //   },
-  //   components: {
-  //     YButton
-  //   }
-  // }
 </script>
 <style lang="scss" rel="stylesheet/scss" scoped>
   @import "../assets/style/theme";

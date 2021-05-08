@@ -1,23 +1,31 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import { setStore, getStore } from '@/utils/storage'
+import { setStore, getStore ,removeStore} from '@/utils/storage'
+import {removeToken} from "@/utils/auth";
 
 export default new Vuex.Store({
   state: {
-    login: false,//是否登录
-    userInfo: null,//用户信息
-    cartList: [],//加入购物车商品
+    login: JSON.parse( getStore('login')) || false,//是否登录
+    userInfo: JSON.parse( getStore('userInfo')),//用户信息
+    cartList: JSON.parse( getStore('cartList'))||[],//加入购物车商品
     showCart: false
   },
   mutations: {
+    CLEAR (state) {
+      removeToken();
+      removeStore("token");
+      removeStore("buyCart");
+      removeStore("login");
+      removeStore("userInfo");
+    },
     // 网页初始化时从本地缓存获取购物车数据
-    INITBUYCART(state) {
-      let initCart = getStore('buyCart');
+    INIT_BUYCART (state) {
+      let initCart = getStore('buyCart')
       if (initCart) {
         state.cartList = JSON.parse(initCart)
-
       }
+      console.log(state)
     },
     SHOWCART(state, { showCart }) {
       state.showCart = showCart;
@@ -25,7 +33,9 @@ export default new Vuex.Store({
     ISLOGIN(state, info) {
       state.userInfo = info;
       state.login = true;
+      console.log(state)
       setStore('userInfo', info);
+      setStore('login', true);
     },
     EDIT_CART(state, { productId,productName, productNum = 1 }){
       let cart = state.cartList;

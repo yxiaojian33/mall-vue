@@ -52,12 +52,13 @@ export default {
     },
     addCart(id, price, name, img) {
       if (this.login) {
+        alert("Y")
         // 用户已登录
-        this.$http.post("/api/addCart", {
-          userId: getStore("id"),
-          productId:id,
-          productNum:1
-        });
+        // this.$http.post("/api/addCart", {
+        //   userId: getStore("id"),
+        //   productId:id,
+        //   productNum:1
+        // });
         // 已经存储到后端中， 将当前的商品存储到store的cartList
         this.ADDCART({
           productId:id,
