@@ -52,7 +52,6 @@ export default {
     },
     addCart(id, price, name, img) {
       if (this.login) {
-        alert("Y")
         // 用户已登录
         // this.$http.post("/api/addCart", {
         //   userId: getStore("id"),

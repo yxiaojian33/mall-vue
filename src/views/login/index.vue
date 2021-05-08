@@ -10,10 +10,10 @@
         label-width="100px"
         class="demo-ruleForm"
       >
-        <el-form-item label="账号" prop="user">
+        <el-form-item label="账号" prop="username">
           <el-input type="text" v-model="ruleForm.username" autocomplete="off" placeholder="请输入账号"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="pass">
+        <el-form-item label="密码" prop="password">
           <el-input type="password" v-model="ruleForm.password" autocomplete="off" placeholder="请输入密码"></el-input>
         </el-form-item>
         <el-form-item>
@@ -21,7 +21,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
-          <el-button style="margin-left: 80px;">返回</el-button>
+          <el-button style="margin-left: 80px;" @click="toRegister">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -74,6 +74,9 @@ export default {
     this.login_addCart();
   },
   methods: {
+    toRegister(){
+      this.$router.push('/register')
+    },
     remember(){
       if(this.checked){
         setCookie("username",this.ruleForm.username,15);

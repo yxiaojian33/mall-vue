@@ -20,3 +20,18 @@ export function logout(params) {
         params:params
     })
 }
+
+export function getAuthCode(params) {
+    return request({
+        url:'/mall-portal/sso/getAuthCode',
+        method:'get',
+        params:params
+    })
+}
+export function register(params) {
+    return request({
+        url:'/mall-portal/sso/register',
+        method:'post',
+        params:params
+    })
+}
