@@ -66,7 +66,7 @@ export default {
   },
   mounted() {
 
-    this.checked = JSON.parse(getCookie('remember'))
+    this.checked = JSON.parse(getStore('remember'))
     //缓存当前购物车中的数据
     this.ruleForm.username = this.checked?getCookie("username"):''
     this.ruleForm.password = this.checked?getCookie("password"):''
@@ -79,7 +79,7 @@ export default {
         setCookie("username",this.ruleForm.username,15);
         setCookie("password",this.ruleForm.password,15);
       }
-      setCookie('remember',this.checked)
+      setStore('remember',this.checked)
     },
     login_addCart() {
       let cartArr = [];
