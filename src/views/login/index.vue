@@ -51,11 +51,11 @@ export default {
       }
     };
     return {
-      checked: true,
+      checked: false,
       redirect: '',
       ruleForm: {
-        username: getCookie("username") ||"",
-        password: getCookie("password") ||""
+        username: "",
+        password: ""
       },
       rules: {
         username: [{ validator: validateUser, trigger: "blur" }],
@@ -65,11 +65,22 @@ export default {
     };
   },
   mounted() {
+
+    this.checked = JSON.parse(getCookie('remember'))
     //缓存当前购物车中的数据
+    this.ruleForm.username = this.checked?getCookie("username"):''
+    this.ruleForm.password = this.checked?getCookie("password"):''
     this.redirect =this.$route.query.redirect;
     this.login_addCart();
   },
   methods: {
+    remember(){
+      if(this.checked){
+        setCookie("username",this.ruleForm.username,15);
+        setCookie("password",this.ruleForm.password,15);
+      }
+      setCookie('remember',this.checked)
+    },
     login_addCart() {
       let cartArr = [];
       let localCart = JSON.parse(getStore("buyCart"));
@@ -98,8 +109,7 @@ export default {
                 }
               })
               setToken(tokenStr)
-              setCookie("username",this.ruleForm.username,15);
-              setCookie("password",this.ruleForm.password,15);
+              this.remember()
               this.$router.push('/')
               // if(this.redirect && this.redirect.length){ this.$router.push({path: this.redirect})}
               // else this.$router.push('/')

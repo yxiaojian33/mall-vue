@@ -9,7 +9,8 @@ export default new Vuex.Store({
     login: JSON.parse( getStore('login')) || false,//是否登录
     userInfo: JSON.parse( getStore('userInfo')),//用户信息
     cartList: JSON.parse( getStore('cartList'))||[],//加入购物车商品
-    showCart: false
+    showCart: false,
+    remember: JSON.parse( getStore('remember'))
   },
   mutations: {
     CLEAR (state) {
