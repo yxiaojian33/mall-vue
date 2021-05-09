@@ -33,11 +33,10 @@
           <el-input type="password" v-model="ruleForm.confirm" autocomplete="off" placeholder="请输入密码"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-checkbox v-model="checked" style="float: left">记住密码</el-checkbox>
+          <el-checkbox v-model="checked" style="float: left">同意注册协议</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="toRegister('ruleForm')">注册</el-button>
-          <el-button style="margin-left: 80px;" @click="toRegister">注册</el-button>
+          <el-button  :disabled="!checked" type="primary" @click="toRegister('ruleForm')">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -124,8 +123,6 @@ export default {
     };
   },
   mounted() {
-
-    this.checked = JSON.parse(getStore('remember'))
     //缓存当前购物车中的数据
     this.ruleForm.username = this.checked?getCookie("username"):''
     this.ruleForm.password = this.checked?getCookie("password"):''
@@ -157,13 +154,6 @@ export default {
         }
       })
     },
-    remember(){
-      if(this.checked){
-        setCookie("username",this.ruleForm.username,15);
-        setCookie("password",this.ruleForm.password,15);
-      }
-      setStore('remember',this.checked)
-    },
     login_addCart() {
       let cartArr = [];
       let localCart = JSON.parse(getStore("buyCart"));
@@ -182,16 +172,6 @@ export default {
     async toRegister(formName) {
       this.$refs[formName].validate(async valid => {
         if (valid) {
-          /**
-           * authCode	authCode	query	true
-           string
-           password	password	query	true
-           string
-           telephone	telephone	query	true
-           string
-           username
-           * @type {{}}
-           */
           let params ={
             authCode:this.ruleForm.verification,
             password:this.ruleForm.password,
@@ -200,32 +180,11 @@ export default {
           }
          register(params).then(res=>{
               if(res.code === 200){
+                setCookie("username",this.ruleForm.username,15);
+                setCookie("password",this.ruleForm.password,15);
                 alert("成功")
               }
          })
-          //   获取用户名和密码
-          // let {user,pass} = this.ruleForm;
-          // let res = await this.$http.post("/api/login", this.ruleForm);
-          // if (res.data.code === 200) {
-          //   let { username, token, id } = res.data;
-          //   //  持久化 存储
-          //   setStore("token", token);
-          //   setStore("id", id);
-          //   console.log(this.cart);
-
-          // if (this.cart && this.cart.length) {
-          //   this.cart.forEach(async item => {
-          //     let res = await this.$http.post("/api/addCart", item);
-          //     if (res.data.success === true) {
-          //       //.......
-          //     }
-          //     removeStore("buyCart");
-          //     this.$router.push({ path: "/" });
-          //   });
-          // } else {
-          //   this.$router.push({path: "/"});
-          // }
-          // }
         } else {
           console.log("error submit!!");
           return false;
