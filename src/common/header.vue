@@ -107,7 +107,7 @@
                         class="price-icon">¥</span><span
                         class="price-num">{{totalPrice}}</span></h5>
                         <h6>
-                          <el-button type="warning" style="float: right">结算</el-button>
+                          <el-button type="warning" style="float: right" @click="goCarts">去购物车</el-button>
                         </h6>
                       </div>
                     </div>
@@ -216,6 +216,9 @@ export default {
           productId: productId
         }
       });
+    },
+    goCarts(){
+      this.$router.push('/cart')
     },
     getCartList () {
       cartList().then(res => {

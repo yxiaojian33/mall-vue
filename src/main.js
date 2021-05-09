@@ -7,7 +7,7 @@ import {getInfo} from '@/api/member'
 //TODO vue3.0+ lazy-load
 // import VueLazyload from 'vue-lazyload'
 import {
-    ElButton,ElAutocomplete,ElInput,ElBreadcrumb,ElBreadcrumbItem ,ElCarousel,ElCarouselItem,ElCol,ElRow ,ElImage,ElInfiniteScroll,ElLoading,ElPagination,ElInputNumber,ElRadioButton,ElRadioGroup,ElForm,ElFormItem ,ElCheckbox} from 'element-plus'
+    ElButton,ElAutocomplete,ElInput,ElBreadcrumb,ElBreadcrumbItem ,ElCarousel,ElCarouselItem,ElCol,ElRow ,ElImage,ElInfiniteScroll,ElLoading,ElPagination,ElInputNumber,ElRadioButton,ElRadioGroup,ElForm,ElFormItem ,ElCheckbox ,ElCheckboxGroup} from 'element-plus'
 import {getToken} from "./utils/auth";
 import { mapState } from "vuex";
 import {getStore} from "@/utils/storage";
@@ -33,6 +33,7 @@ createApp(App)
     .use(ElForm)
     .use(ElFormItem)
     .use(ElCheckbox)
+    .use(ElCheckboxGroup)
     .use(Vuex)
     .mount('#app')
 router.beforeEach((to, from, next) => {
