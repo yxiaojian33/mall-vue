@@ -23,6 +23,7 @@ export default new Vuex.Store({
     // 网页初始化时从本地缓存获取购物车数据
     INIT_BUYCART (state) {
       let initCart = getStore('buyCart')
+      console.log(initCart)
       if (initCart) {
         state.cartList = JSON.parse(initCart)
       }
@@ -34,21 +35,20 @@ export default new Vuex.Store({
     ISLOGIN(state, info) {
       state.userInfo = info;
       state.login = true;
-      console.log(state)
       setStore('userInfo', info);
       setStore('login', true);
     },
-    EDIT_CART(state, { productId,productName, productNum = 1 }){
+    EDIT_CART(state, { id , productId, productName, productNum = 1 }){
       let cart = state.cartList;
       if (productNum) {
         cart.forEach((item, i) => {
-          if (item.productId === productId) {
-            item.productNum = productNum
+          if (item.id === id) {
+            item.quantity = productNum
           }
         })
-      } else if (productId) {
+      } else if (id) {
         cart.forEach((item, i) => {
-          if (item.productId === productId) {
+          if (item.id === id) {
             cart.splice(i, 1)
           }
         })
@@ -57,27 +57,29 @@ export default new Vuex.Store({
       // 存入localStorage
       setStore('buyCart', state.cartList)
     },
-    ADDCART(state, { productId, salePrice, productName, productImageBig, productNum = 1 }) {
+    ADDCART(state, {id , productId, price, productName, productPic, quantity = 1 }) {
       let cart = state.cartList;
       let goods = {
+        id,
         productId,
-        salePrice,
+        price,
         productName,
-        productImageBig
+        productPic
       }
+      console.log(price)
       let falg = true;
       if (cart.length) {
         cart.forEach(item => {
-          if (item.productId === productId) {
-            if (item.productNum >= 0) {
+          if (item.id === id) {
+            if (item.quantity >= 0) {
               falg = false;
-              item.productNum += productNum;
+              item.quantity += quantity;
             }
           }
         })
       }
       if (!cart.length || falg) {
-        goods.productNum = productNum;
+        goods.quantity = quantity;
         cart.push(goods);
       }
       state.cartList = cart;

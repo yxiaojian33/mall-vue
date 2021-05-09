@@ -83,7 +83,7 @@
                               <div class="cart-item-inner">
                                 <a @click="openProduct(item.productId)">
                                   <div class="item-thumb">
-                                    <img :src="item.productImageBig">
+                                    <img :src="item.productPic">
                                   </div>
                                   <div class="item-desc">
                                     <div class="cart-cell"><h4>
@@ -91,12 +91,12 @@
                                     </h4>
                                       <!-- <p class="attrs"><span>白色</span></p> -->
                                       <h6><span class="price-icon">¥</span><span
-                                        class="price-num">{{item.salePrice}}</span><span
-                                        class="item-num">x {{item.productNum}}</span>
+                                        class="price-num">{{item.price}}</span><span
+                                        class="item-num">x {{item.quantity}}</span>
                                       </h6></div>
                                   </div>
                                 </a>
-                                <div class="del-btn del" @click="delGoods(item.productId ,item.productNum - 1)">删除</div>
+                                <div class="del-btn del" @click="delGoods(item.id,item.quantity - 1)">删除</div>
                               </div>
                             </div>
                           </li>
@@ -142,7 +142,7 @@
 </template>
 <script>
 
-import {cartList} from "@/api/cartitems";
+import {cartList , updateCart} from "@/api/cartitems";
 import { setStore } from "@/utils/storage";
 import { mapState, mapMutations } from "vuex";
 import store from '@/store'
@@ -158,7 +158,7 @@ export default {
       return (
           this.cartList &&
           this.cartList.reduce((total, item) => {
-            total += item.productNum;
+            total += item.quantity;
             return total;
           }, 0)
       );
@@ -167,7 +167,7 @@ export default {
       return (
           this.cartList &&
           this.cartList.reduce((total, item) => {
-            total += item.productNum * item.salePrice;
+            total += item.quantity * item.price;
             return total;
           }, 0)
       );
@@ -197,19 +197,30 @@ export default {
         })
       }
     },
-    delGoods (productId , productNum) {
+    delGoods (id , productNum) {
       if (this.login) { // 登陆了
-        // cartDel({userId: getStore('userId'), productId}).then(res => {
-        //   this.EDIT_CART({productId})
-        // })
+        let params ={id :id ,quantity:productNum}
+        updateCart(params).then(res=>{
+          if(res.code ===200){
+            this.EDIT_CART({id,productNum})
+          }
+        })
       } else {
-        this.EDIT_CART({productId,productNum})
+        this.EDIT_CART({id,productNum})
       }
+    },
+    openProduct(productId){
+      this.$router.push({
+        path:'/productsDetail',
+        query:{
+          productId: productId
+        }
+      });
     },
     getCartList () {
       cartList().then(res => {
-        if (res.success === true) {
-          setStore('buyCart', res.result)
+        if (res.code === 200) {
+          setStore('buyCart', res.data)
         }
         // 重新初始化一次本地数据
       }).then(this.INIT_BUYCART)
@@ -225,13 +236,6 @@ export default {
     } else {
       this.INIT_BUYCART()
     }
-    // if(getToken()){
-    //   getInfo().then(res=>{
-    //     if(res.code ===200){
-    //       this.userInfo = res.data;
-    //     }
-    //   })
-    // }
   }
 }
 </script>

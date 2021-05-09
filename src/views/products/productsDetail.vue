@@ -28,7 +28,8 @@
         </div>
         <div class="num">
           <span class="params-name">数量</span>
-          <buy-num @edit-num="editNum" :limit="Number(details.product.promotionPerLimit)"></buy-num>
+          <el-input-number v-model="editNum"  :min="1" :max="10" label="描述文字"></el-input-number>
+<!--          <buy-num @edit-num="editNum" :limit="Number(details.product.promotionPerLimit)"></buy-num>-->
         </div>
 
         <ul>
@@ -47,7 +48,7 @@
 
 
         <div class="buy">
-          <el-button type="primary" @click='addCart()'>加入购物车</el-button>
+          <el-button type="primary" @click='addCart(details.product.id ,details.product.price,details.product.name,details.product.pic)'>加入购物车</el-button>
           <el-button type="danger">现在购买</el-button>
         </div>
       </div>
@@ -73,12 +74,16 @@
 <script>
 
 import {detail as getProductDetail} from '@/api/home'
-import BuyNum from '@/components/BuyNum'
+import {addToCart} from '@/api/cartitems'
+import { mapState,mapMutations } from "vuex";
 import MShelf from '@/components/Shelf'
 export default {
+
   name: "productsDetail",
+  computed: {
+    ...mapState(["login" ,"showCart"])
+  },
   components:{
-    BuyNum,
     MShelf
   },
   data(){
@@ -108,6 +113,33 @@ export default {
   },
 
   methods:{
+    ...mapMutations(['ADDCART']),
+    addCart(id ,price ,name ,img){
+      if(this.login){
+        let params ={
+          productId: id,
+          quantity : this.editNum
+        }
+        addToCart(params).then(res=>{
+            if(res.code ===200){
+              this.ADDCART({
+                id : res.data,
+                productId:id,
+                salePrice:price,
+                productName:name,
+                productImageBig:img
+              })
+            }
+        })
+      }
+      else this.ADDCART({
+        id : id,
+        productId:id,
+        salePrice:price,
+        productName:name,
+        productImageBig:img
+      })
+    },
     Change(){
       let params =[];
       for(let i = 0 ;i< this.radio.length ;i++){

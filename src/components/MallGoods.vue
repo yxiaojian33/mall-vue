@@ -33,6 +33,7 @@
 </template>
 <script>
 import { mapState,mapMutations } from "vuex";
+import { addToCart } from "@/api/cartitems";
 import { getStore } from "@/utils/storage";
 export default {
   props: ["products"],
@@ -52,27 +53,30 @@ export default {
     },
     addCart(id, price, name, img) {
       if (this.login) {
-        // 用户已登录
-        // this.$http.post("/api/addCart", {
-        //   userId: getStore("id"),
-        //   productId:id,
-        //   productNum:1
-        // });
-        // 已经存储到后端中， 将当前的商品存储到store的cartList
-        this.ADDCART({
-          productId:id,
-          salePrice:price,
-          productName:name,
-          productImageBig:img
+        let params ={
+          productId: id,
+          quantity : 1
+        }
+        addToCart(params).then(res=>{
+          if(res.code ===200){
+            this.ADDCART({
+              id : res.data,
+              productId:id,
+              price:price,
+              productName:name,
+              productPic:img
+            })
+          }
         })
 
       }else{
         // 如果用户未登录 也要将商品存储到store的cartList
         this.ADDCART({
+          id : id,
           productId:id,
-          salePrice:price,
+          price:price,
           productName:name,
-          productImageBig:img
+          productPic:img
         })
       }
     }

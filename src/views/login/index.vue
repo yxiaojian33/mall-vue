@@ -113,34 +113,11 @@ export default {
               })
               setToken(tokenStr)
               this.remember()
-              this.$router.push('/')
+              window.location.href = "/";
               // if(this.redirect && this.redirect.length){ this.$router.push({path: this.redirect})}
               // else this.$router.push('/')
             }
           })
-          //   获取用户名和密码
-          // let {user,pass} = this.ruleForm;
-          // let res = await this.$http.post("/api/login", this.ruleForm);
-          // if (res.data.code === 200) {
-          //   let { username, token, id } = res.data;
-          //   //  持久化 存储
-          //   setStore("token", token);
-          //   setStore("id", id);
-          //   console.log(this.cart);
-
-            // if (this.cart && this.cart.length) {
-            //   this.cart.forEach(async item => {
-            //     let res = await this.$http.post("/api/addCart", item);
-            //     if (res.data.success === true) {
-            //       //.......
-            //     }
-            //     removeStore("buyCart");
-            //     this.$router.push({ path: "/" });
-            //   });
-            // } else {
-            //   this.$router.push({path: "/"});
-            // }
-          // }
         } else {
           console.log("error submit!!");
           return false;
