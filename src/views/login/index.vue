@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="login" v-loading="loading">
     <div class="box">
       <span>使用账号 登录官网</span>
       <el-form
@@ -51,6 +51,7 @@ export default {
       }
     };
     return {
+      loading : false ,
       checked: false,
       redirect: '',
       ruleForm: {
@@ -99,8 +100,9 @@ export default {
       }
       this.cart = cartArr;
     },
-    async submitForm(formName) {
-      this.$refs[formName].validate(async valid => {
+     submitForm(formName) {
+      this.loading = true
+      this.$refs[formName].validate( valid => {
         if (valid) {
           login(this.ruleForm).then((res)=>{
             if(res.code == 200){
@@ -123,6 +125,7 @@ export default {
           return false;
         }
       });
+      this.loading = false
     }
   }
 };

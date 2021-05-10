@@ -18,7 +18,8 @@ const routes = [
     component: ()=> import('@/views/header'),
     children: [
       {path: '/search', component: ()=> import('@/views/search')},
-      {path:'/cart', name:'cart', component:()=>import('@/views/cart'), meta:{auth:true}}
+      {path:'/cart', name:'cart', component:()=>import('@/views/cart'), meta:{auth:true}},
+      {path:'/checkout', name:'checkout', component:()=>import('@/views/checkout'), meta:{auth:true}}
     ]
   },
   {path: '/login', name: 'login', component: ()=> import('@/views/login')},

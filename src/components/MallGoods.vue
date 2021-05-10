@@ -1,7 +1,7 @@
 <template>
   <el-row class="good-item">
     <el-col>
-      <el-card :body-style="{padding: 0}">
+      <div :body-style="{padding: 0}">
         <div class="good-img">
           <a>
             <img :src="products.pic" alt lazy>
@@ -27,7 +27,7 @@
             {{Number(products.price).toFixed(2)}}
           </p>
         </div>
-      </el-card>
+      </div>
     </el-col>
   </el-row>
 </template>

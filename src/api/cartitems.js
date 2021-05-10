@@ -24,3 +24,11 @@ export function updateCart(params) {
         params: params
     })
 }
+/**批量删除购物车**/
+export function deleteCarts(params) {
+    return request({
+        url: '/mall-portal/cart/delete',
+        method:'post',
+        data: params
+    })
+}

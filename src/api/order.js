@@ -6,3 +6,11 @@ export function generateOrder(params) {
         data: params
     })
 }
+/**根据购物车信息生成确认单信息**/
+export function generateConfirmOrder(params) {
+    return request({
+        url:'/mall-portal/order/generateConfirmOrder',
+        method:'post',
+        data: params
+    })
+}

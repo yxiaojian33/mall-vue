@@ -28,6 +28,25 @@ export function getAuthCode(params) {
         params:params
     })
 }
+
+/**添加收货地址**/
+export function addAddress(params) {
+    return request({
+        url:'/mall-portal/member/address/add',
+        method:'post',
+        data:params
+    })
+}
+
+/**获取用户所有收货地址**/
+export function getAddress(params) {
+    return request({
+        url:'/mall-portal/member/address/list',
+        method:'get',
+        params :params
+    })
+}
+
 export function register(params) {
     return request({
         url:'/mall-portal/sso/register',
