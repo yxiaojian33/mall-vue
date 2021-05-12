@@ -57,7 +57,7 @@ export default new Vuex.Store({
       // 存入localStorage
       setStore('buyCart', state.cartList)
     },
-    ADDCART(state, {id , productId, price, productName, productPic, quantity = 1 }) {
+    ADDCART(state, {id ,productId, price, productName, productPic, quantity = 1 }) {
       let cart = state.cartList;
       let goods = {
         id,

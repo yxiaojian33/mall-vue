@@ -28,6 +28,7 @@ service.interceptors.response.use(
   /**
   * code为非200是抛错 可结合自己业务进行修改
   */
+  if(!response.data) return response;
     const res = response.data
     if (res.code !== 200) {
       ElMessage({

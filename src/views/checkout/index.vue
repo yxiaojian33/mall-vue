@@ -173,19 +173,20 @@
                   </h4>
                   </div>
                 </div>
-                <el-button type="danger">去支付</el-button>
+                <el-button type="danger" @click="toPay()">去支付</el-button>
               </div>
             </div>
           </div>
         </div>
       </template>
     </y-shelf>
+    <div id = "PayPage"></div>
   </div>
 </template>
 
 <script>
 import YShelf from '@/components/Shelf'
-import {generateConfirmOrder} from '@/api/order'
+import {generateConfirmOrder ,generateOrder} from '@/api/order'
 import {addAddress, getAddress} from '@/api/member'
 
 const TEL_MATCH = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
@@ -248,18 +249,37 @@ export default {
     }
   },
   methods: {
+    toPay(){
+      let params ={
+        cartIds: this.cartIds,
+
+        memberReceiveAddressId: this.checkedAddress.id,
+        payType: 1,
+      }
+      generateOrder(params).then(res=>{
+        if(res.code ===200){
+          let routeData = this.$router.resolve({ path: 'pay', query: { htmls: res.data }});
+          window.open(routeData.href, '_blank');
+        }
+        else this.$notify.error({
+          title: '失败',
+          message: res.message,
+          showClose: false
+        });
+      })
+    },
     toAddAddress(formName) {
       this.$refs[formName].validate(async valid => {
         if (valid) {
           let params = this.address;
-          params.defaultStatus = addAddress.defaultStatus ? 1 : 0
+          paramthis.$notify.success({
+            title: '成功',
+            message: '添加收获地址成功',
+            showClose: false
+          });s.defaultStatus = addAddress.defaultStatus ? 1 : 0
           addAddress(params).then(res => {
             if (res.code === 200) {
-              this.$notify.success({
-                title: '成功',
-                message: '添加收获地址成功',
-                showClose: false
-              });
+
               getAddress().then(x => {
                 if (x.code === 200) {
                   this.memberReceiveAddressList = x.data;

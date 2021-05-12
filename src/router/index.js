@@ -26,6 +26,7 @@ const routes = [
   {path: '/register', name: 'register', component: ()=> import('@/views/login/register')},
   {path: '/refreshsearch', name: 'refreshsearch', component: ()=>import('@/views/refresh/refreshsearch.vue')},
   {path:'/user', name:'user', component:()=>import('@/views/user'), meta:{auth:true}},
+  {path:'/pay', name:'pay', component:()=>import('@/views/checkout/pay'), meta:{auth:true}},
 
 ]
 

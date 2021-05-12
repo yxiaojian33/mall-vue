@@ -89,7 +89,9 @@
                                     <div class="cart-cell"><h4>
                                       <a href="" v-text="item.productName"></a>
                                     </h4>
-                                      <!-- <p class="attrs"><span>白色</span></p> -->
+                                       <p class="attrs" v-if="item.skuStockt"><span>
+                                         {{item.skuStockt.spData}}
+                                       </span></p>
                                       <h6><span class="price-icon">¥</span><span
                                         class="price-num">{{item.price}}</span><span
                                         class="item-num">x {{item.quantity}}</span>
@@ -234,6 +236,7 @@ export default {
     },
   },
   mounted() {
+    console.log(this.cartList)
     if (this.login) {
       this.getCartList()
     } else {

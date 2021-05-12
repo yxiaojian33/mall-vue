@@ -23,8 +23,16 @@
           <h6>
             <span>{{details.product.subTitle}}</span>
             <span class="price">
-              <em>¥</em><i>{{Number(details.product.price).toFixed(2)}}</i></span>
+              <em>¥</em><i>{{Number(skuStockt.price).toFixed(2)}}</i></span>
           </h6>
+          <h3>
+            <ul>
+              <li v-for="item in details.productFullReductionList" :key = "item.id">
+               <span style="color: #e25147 ;font-weight: bold"> 满{{item.fullPrice}} 减 {{item.reducePrice}}元</span>
+              </li>
+            </ul>
+
+          </h3>
         </div>
         <div class="num">
           <span class="params-name">数量</span>
@@ -35,15 +43,30 @@
         <ul>
           <li v-for="(item,i) in details.productAttributeList">
             <span class="params-name">{{ item.name }}</span>
-            <el-radio-group  v-model="radio[i]" :disabled="item.type ===1" size="mini" @change="Change">
+            <el-radio-group  v-model="radio[i]" :disabled="item.type ===1" size="mini">
               <template v-if="productAttributeMap[item.id] && productAttributeMap[item.id].value && productAttributeMap[item.id].value.length > 0">
                 <el-radio-button  v-for="(attr,j) in productAttributeMap[item.id].value" :label="attr" :key="j" ></el-radio-button>
               </template>
               <template v-else-if="item.inputList">
-                <el-radio-button  v-for="(attr,j) in item.inputList.split(',')" :label="attr" :key="j" ></el-radio-button>
+                <el-radio-button disabled  v-for="(attr,j) in item.inputList.split(',')" :label="attr" :key="j" ></el-radio-button>
               </template>
             </el-radio-group>
           </li>
+          <li>
+            <span class="params-name">规格</span>
+            <el-select v-model="skuStockt" placeholder="请选择">
+              <el-option v-for="(attr,j) in details.skuStockList" :label="spData(attr.spData)" :value="attr" :key="j">
+              </el-option>
+            </el-select>
+<!--            <el-radio-group v-model="skuStockt">-->
+
+<!--              <el-radio-button  v-for="(attr,j) in details.skuStockList" :label="attr" :key="j" >-->
+<!--                {{attr.spData}}-->
+<!--              </el-radio-button>-->
+<!--            </el-radio-group>-->
+
+          </li>
+
         </ul>
 
 
@@ -88,6 +111,7 @@ export default {
   },
   data(){
     return{
+      skuStockt: {},
       productId:'',
       big: '',
       radio:[],
@@ -105,6 +129,7 @@ export default {
         product: {},
         brand: {},
         productAttributeList: [],
+        productFullReductionList:[],
         productAttributeValueList: [],
         skuStockList: [],
         couponList: []
@@ -114,10 +139,20 @@ export default {
 
   methods:{
     ...mapMutations(['ADDCART']),
+
+    spData(spData){
+      let obj  =JSON.parse(spData);
+      let attr = obj.map(x=>{
+        return x.key + ":" + x.value
+      })
+      return attr.join(",")
+    },
     addCart(id ,price ,name ,img){
       if(this.login){
         let params ={
           productId: id,
+          price : this.skuStockt.price,
+          productSkuId : this.skuStockt.id,
           quantity : this.editNum
         }
         addToCart(params).then(res=>{
@@ -125,9 +160,9 @@ export default {
               this.ADDCART({
                 id : res.data,
                 productId:id,
-                salePrice:price,
+                price:this.skuStockt.price,
                 productName:name,
-                productImageBig:img
+                productPic:img
               })
             }
         })
@@ -135,23 +170,10 @@ export default {
       else this.ADDCART({
         id : id,
         productId:id,
-        salePrice:price,
+        price:price,
         productName:name,
-        productImageBig:img
+        productPic:img
       })
-    },
-    Change(){
-      let params =[];
-      for(let i = 0 ;i< this.radio.length ;i++){
-        let item =this.details.productAttributeList[i];
-        if(item.type === 0){
-          params.push({key:item.name ,value:this.radio[i]})
-        }
-      }
-      let get = this.skuStockListMap.get(JSON.stringify(params))
-      this.details.product.price = get?get.price:undefined
-
-
     },
     getDetails(){
       getProductDetail(this.productId).then(res=>{
@@ -160,6 +182,9 @@ export default {
           if(str ==="") this.small=[];
           else this.small = str.split(',');
           this.small.push(this.details.product.pic)
+          if(this.details.skuStockList && this.details.skuStockList.length > 0){
+            this.skuStockt = this.details.skuStockList[0]
+          }
           this.details.productAttributeValueList.forEach(item=>{
            if(item.value){
              item.value = item.value.split(",")
@@ -182,7 +207,6 @@ export default {
   async mounted () {
     this.productId =this.$route.query.productId;
     this.getDetails()
-    this.Change()
   },
 }
 </script>

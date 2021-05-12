@@ -55,6 +55,7 @@ export default {
       if (this.login) {
         let params ={
           productId: id,
+          price: price ,
           quantity : 1
         }
         addToCart(params).then(res=>{
